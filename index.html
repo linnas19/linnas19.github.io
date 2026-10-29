@@ -1,383 +1,388 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Красивый сайт с галереей</title>
-    <style>
-        /* ========== ОБЩИЕ СТИЛИ ========== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        /* ========== КАРТОЧКА ========== */
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 50px 60px;
-            max-width: 800px;
-            width: 100%;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
-            transform: translateY(0);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-align: center;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
-        }
-
-        .icon {
-            font-size: 70px;
-            margin-bottom: 20px;
-            display: inline-block;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        h1 {
-            font-size: 2.5em;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 15px;
-        }
-
-        .subtitle {
-            font-size: 1.1em;
-            color: #666;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        /* ========== ФИШКИ ========== */
-        .features {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-            margin: 30px 0;
-        }
-
-        .feature-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .feature-item:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .feature-item .emoji {
-            font-size: 30px;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .feature-item span {
-            font-size: 0.9em;
-            font-weight: 600;
-        }
-
-        /* ========== ГАЛЕРЕЯ ========== */
-        .gallery-container {
-            margin: 30px 0;
-            position: relative;
-        }
-
-        #gallery {
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding: 20px 10px;
-            scroll-behavior: smooth;
-            scrollbar-width: thin;
-            scrollbar-color: #667eea #f0f0f0;
-            border-radius: 15px;
-            background: #f8f9fa;
-            min-height: 200px;
-        }
-
-        #gallery::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        #gallery::-webkit-scrollbar-track {
-            background: #f0f0f0;
-            border-radius: 10px;
-        }
-
-        #gallery::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 10px;
-        }
-
-        .gallery-item {
-            flex: 0 0 200px;
-            height: 150px;
-            border-radius: 15px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .gallery-item:hover {
-            transform: scale(1.05) rotate(-2deg);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            z-index: 10;
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .gallery-item .overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-            padding: 10px;
-            color: white;
-            font-size: 0.8em;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            text-align: left;
-        }
-
-        .gallery-item:hover .overlay {
-            opacity: 1;
-        }
-
-        /* ========== КНОПКИ УПРАВЛЕНИЯ ========== */
-        .gallery-controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .gallery-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .gallery-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .counter {
-            color: #666;
-            font-size: 0.9em;
-            margin-top: 10px;
-        }
-
-        /* ========== МОДАЛЬНОЕ ОКНО ========== */
-        #modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        #modal.active {
-            display: flex;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        #modalImage {
-            max-width: 90%;
-            max-height: 80%;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            animation: scaleIn 0.3s ease;
-        }
-
-        @keyframes scaleIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 30px;
-            right: 40px;
-            color: white;
-            font-size: 40px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            background: none;
-            border: none;
-        }
-
-        .modal-close:hover {
-            transform: rotate(90deg);
-        }
-
-        /* ========== КНОПКА ========== */
-        .btn {
-            display: inline-block;
-            padding: 15px 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(45deg);
-            transition: all 0.5s ease;
-        }
-
-        .btn:hover::after {
-            left: 100%;
-        }
-
-        .footer-text {
-            margin-top: 25px;
-            color: #999;
-            font-size: 0.9em;
-        }
-
-        /* ========== АДАПТИВНОСТЬ ========== */
-        @media (max-width: 600px) {
-            .card {
-                padding: 30px 20px;
-            }
-            
-            h1 {
-                font-size: 2em;
-            }
-            
-            .features {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-
-            .gallery-item {
-                flex: 0 0 150px;
-                height: 120px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация — Supabase</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background-color: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      padding: 30px 15px;
+      margin: 0;
+    }
+    .container {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 420px;
+    }
+    h2, h3 {
+      margin-top: 0;
+      color: #1f2937;
+      text-align: center;
+    }
+    .config-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 12px;
+    }
+    .config-box label {
+      font-weight: 600;
+      color: #92400e;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .config-box input {
+      margin-bottom: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      padding: 6px 8px;
+    }
+    .form-group { margin-bottom: 12px; }
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus { border-color: #10b981; }
+    button {
+      width: 100%;
+      padding: 11px;
+      background-color: #10b981;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { background-color: #059669; }
+    button:disabled { background-color: #9ca3af; cursor: not-allowed; }
+    .btn-secondary {
+      background-color: #3b82f6;
+      margin-top: 5px;
+      padding: 7px;
+      font-size: 13px;
+    }
+    .btn-secondary:hover { background-color: #2563eb; }
+    .status {
+      margin-top: 12px;
+      font-size: 13px;
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      display: none;
+      word-break: break-word;
+    }
+    .error { display: block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .success { display: block; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+    hr { border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0; }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    li {
+      background: #f9fafb;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      color: #374151;
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body>
-    <!-- ====== ОСНОВНАЯ КАРТОЧКА ====== -->
-    <div class="card">
-        <div class="icon">🖼️</div>
-        <h1>Галерея изображений</h1>
-        <p class="subtitle">
-            Наслаждайтесь красивыми пейзажами<br>
-            и управляйте просмотром
-        </p>
 
-        <!-- Фишки -->
-        <div class="features">
-            <div class="feature-item">
-                <span class="emoji">🎨</span>
-                <span>Дизайн</span>
-            </div>
-            <div class="feature-item">
-                <span class="emoji">⚡</span>
-                <span>Скорость</span>
-            </div>
-            <div class="feature-item">
-                <span class="emoji">❤️</span>
-                <span>Качество</span>
-            </div>
-        </div>
 
-        <!-- ГАЛЕРЕЯ -->
-        <div class="gallery-container">
-            <div id="gallery"></div>
-            <div class="gallery-controls">
-                <button class="gallery-btn" onclick="scrollGallery(-1)">◀ Назад</button>
-                <button class="gallery-btn" onclick="scrollGallery(1)">Вперед ▶</button>
-            </div>
-            <div class="counter" id="counter">0 / 0</div>
-        </div>
 
-        <a href="#" class="btn">Исследовать</a>
-        <p class="footer-text">Сделано с 💜 для вдохновения</p>
+
+<div class="container">
+  <!-- Блок для быстрой проверки подключения (можно скрыть, когда пропишешь ключи в коде) -->
+  <h2>Регистрация signup (email + пароль)</h2>
+  <form id="regFormSign">
+    <div class="form-group">
+      <input type="email" id="signEmail" placeholder="Email" required>
     </div>
-
-    <!-- ====== МОДАЛЬНОЕ ОКНО ====== -->
-    <div id="modal">
-        <button class="modal-close" onclick="closeModal()">✕</button>
-        <img id="modalImage" src="" alt="Увеличенное изображение">
+    <div class="form-group">
+      <input type="password" id="signPassword" placeholder="Пароль (мин. 6 символов)" required minlength="6">
     </div>
+    <button type="submit" id="signSubmitBtn">Зарегистрироваться (signUp)</button>
+    <div id="signStatusMsg" class="status"></div>
+  </form>
+  
+  <h3 style="margin-top:20px;">Пользователи signUp:</h3>
+  <ul id="signUserList">
+    <li style="color:#6b7280;">Пока никто не зарегистрирован через signUp</li>
+  </ul>
 
-    <!-- ====== ПОДКЛЮЧЕНИЕ JAVASCRIPT ====== -->
-    <script src="script.js"></script>
+  <h2>Регистрация insert!!!</h2>
+<form id="regForm">
+  <div class="form-group">
+    <input type="text" id="usernameInsert" placeholder="Логин (username)" required>
+  </div>
+  <div class="form-group">
+    <input type="password" id="passwordInsert" placeholder="Пароль (password)" required>
+  </div>
+  <button type="submit" id="submitBtn">Зарегистрироваться</button>
+  <div id="statusMsgInsert" class="status"></div>
+</form>
+
+  <hr>
+
+  <h3>Зарегистрированные пользователи:</h3>
+  <ul id="userList">
+    <li style="color: #6b7280;">Укажите ключи выше или в коде...</li>
+  </ul>
+</div>
+
+  <script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+
+
+
+  // Остальной JS-код страницы — здесь
+
+  const DEFAULT_URL = 'https://fnpxkfkdzptfnpqokhwx.supabase.co';
+  const DEFAULT_KEY = 'sb_publishable_LA5UVCIAZihtzEzvbq5EXQ_9MLGmu98';
+  const supabase = createClient(DEFAULT_URL, DEFAULT_KEY)
+
+
+  const regForm = document.getElementById('regForm');
+const userList = document.getElementById('userList');
+const statusMsgInsert = document.getElementById('statusMsgInsert');
+const submitBtn = document.getElementById('submitBtn');
+
+const regFormSign = document.getElementById('regFormSign');
+const signUserList = document.getElementById('signUserList');
+const signStatusMsg = document.getElementById('signStatusMsg');
+const signSubmitBtn = document.getElementById('signSubmitBtn');
+
+
+
+function showStatus(text, type, el = statusMsgInsert) {
+  el.textContent = text;
+  el.className = 'status ' + type;
+}
+
+  function getCredentials() {
+  return { url: DEFAULT_URL, key: DEFAULT_KEY };
+ } 
+
+  // 1. ПОЛУЧЕНИЕ СПИСКА ПОЛЬЗОВАТЕЛЕЙ (Прямой GET-запрос к таблице users)
+  async function fetchUsers() {
+    const { url, key } = getCredentials();
+
+    if (!url || !key || !url.startsWith('http')) {
+      userList.innerHTML = '<li style="color: #ef4444;">Введите корректный Project URL и Key в желтом блоке сверху!</li>';
+      return;
+    }
+
+    userList.innerHTML = '<li>Загрузка...</li>';
+
+    try {
+      // Обращаемся напрямую к таблице users, запрашиваем только поле username
+      const response = await fetch(`${url}/rest/v1/users?select=username`, {
+        method: 'GET',
+        headers: {
+          'apikey': key,
+          'Authorization': `Bearer ${key}`
+        }
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.message || `Ошибка сервера: ${response.status}`);
+      }
+
+      const data = await response.json();
+      userList.innerHTML = '';
+
+      if (data.length === 0) {
+        userList.innerHTML = '<li style="color: #9ca3af;">В таблице пока нет пользователей</li>';
+        return;
+      }
+
+      // Отображаем новых сверху (разворачиваем массив)
+      data.reverse().forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = '👤 ' + (user.username || '(без имени)');
+        userList.appendChild(li);
+      });
+
+    } catch (err) {
+      console.error('Детали ошибки:', err);
+      userList.innerHTML = `<li style="color: #dc2626;">Не удалось подключиться: ${err.message}. Проверьте URL, VPN или RLS в Supabase.</li>`;
+    }
+  }
+
+  // 2. ОТПРАВКА ФОРМЫ (Прямой POST-запрос в таблицу users)
+  regForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const { url, key } = getCredentials();
+
+    if (!url || !key) {
+      showStatus('Сначала заполните Project URL и Key сверху!', 'error', statusMsgInsert);
+      return;
+    }
+
+    const username = document.getElementById('usernameInsert').value.trim();
+const password = document.getElementById('passwordInsert').value;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправка...';
+    statusMsg.className = 'status';
+
+    try {
+      const response = await fetch(`${url}/rest/v1/users`, {
+        method: 'POST',
+        headers: {
+          'apikey': key,
+          'Authorization': `Bearer ${key}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.message || `Код ошибки: ${response.status}`);
+      }
+
+      showStatus('Пользователь успешно добавлен!', 'success',statusMsgInsert);
+      regForm.reset();
+      fetchUsers(); // Обновляем список снизу
+
+    } catch (err) {
+      console.error('Ошибка при отправке:', err);
+      showStatus('Ошибка запроса: ' + err.message, 'error',statusMsgInsert);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Зарегистрироваться';
+    }
+  });
+
+
+
+    fetchUsers();
+
+
+    const channel = supabase
+  .channel('table-changes')
+  .on(
+    'postgres_changes',
+    {
+      event: '*',
+      schema: 'public',
+      table: 'users',
+    },
+    () => {
+      fetchUsers();
+    }
+  )
+  .subscribe((status) => {
+    console.log('Realtime:', status);
+  });
+  
+  function showSignStatus(text, type) {
+  showStatus(text, type, signStatusMsg);
+}
+
+async function fetchSignUsers() {
+  try {
+
+    const { data, error } = await supabase.auth.getSession();
+    
+    //console.log("hello")
+    //console.log(a);
+    if (error) throw error;
+
+    signUserList.innerHTML = '';
+    const user = data?.session?.user;
+
+    if (!user) {
+      signUserList.innerHTML =
+        '<li style="color:#9ca3af;">Пока никто не зарегистрирован через signUp (нет активной сессии)</li>';
+      return;
+    }
+
+    const li = document.createElement('li');
+    li.textContent = '📧 ' + user.email + (user.email_confirmed_at ? ' ✅' : ' ⏳ (подтвердите email)');
+    signUserList.appendChild(li);
+  } catch (err) {
+    console.error('fetchSignUsers:', err);
+    signUserList.innerHTML =
+      `<li style="color:#dc2626;">Ошибка: ${err.message}</li>`;
+  }
+}
+regFormSign.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById('signEmail').value.trim();
+  const password = document.getElementById('signPassword').value;
+
+  signSubmitBtn.disabled = true;
+  signSubmitBtn.textContent = 'Отправка...';
+  signStatusMsg.className = 'status';
+
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      // если хочешь сразу сохранить username — можно передать в metadata:
+      // options: { data: { username: email.split('@')[0] } }
+    });
+
+    if (error) throw error;
+
+    if (data.user && !data.session) {
+      showSignStatus(
+        'Регистрация успешна! Проверьте почту для подтверждения email.',
+        'success'
+      );
+    } else {
+      showSignStatus('Пользователь зарегистрирован и вошёл в систему.', 'success');
+    }
+
+    regFormSign.reset();
+    fetchSignUsers();
+  } catch (err) {
+    console.error('signUp error:', err);
+    showSignStatus('Ошибка signUp: ' + err.message, 'error');
+  } finally {
+    signSubmitBtn.disabled = false;
+    signSubmitBtn.textContent = 'Зарегистрироваться (signUp)';
+  }
+});
+
+// Первичная загрузка списка signUp-пользователей
+fetchSignUsers();
+
+// Обновлять список при смене сессии (вход/выход)
+supabase.auth.onAuthStateChange(() => {
+  fetchSignUsers();
+});
+</script>
+
 </body>
 </html>
